@@ -87,6 +87,10 @@ public class GraveManager {
                             cleanupBrokenHolograms();
                         }
 
+                        if (graveInventory.getPlayer() != null && !graveInventory.getProtected()){
+                            graveInventory.setUnlink(true);
+                        }
+
                         if (graveInventory.getProtectTime() > 0 && graveInventory.getProtected()) {
                             if (System.currentTimeMillis() - graveInventory.getCreatedTime() >= graveInventory.getProtectTime()) {
                                 setGraveProtection(graveInventory, false);
@@ -387,13 +391,15 @@ public class GraveManager {
         }
 
         Location location = getPlaceLocation(player.getLocation());
+        int worldHeight = player.getWorld().getMaxHeight();
+        int worldBottom = player.getWorld().getMinHeight();
 
         if (location == null) {
             return null;
         }
 
         if (player.getLocation().distance(location) >= plugin.getConfig().getInt("settings.maxSearch")) {
-            if (player.getLocation().getY() > 0 && player.getLocation().getY() < 256) {
+            if (player.getLocation().getY() > worldBottom && player.getLocation().getY() < worldHeight) {
                 location = player.getLocation();
             }
         }
@@ -450,7 +456,7 @@ public class GraveManager {
 
         gravesMap.put(graveInventory.getLocation(), graveInventory);
 
-        String timeString = getTimeString((long) getAliveTime(player) / 1000);
+        String timeString = getTimeString((long) getProtectTime(player) / 1000);
         String deathMessage = Objects.requireNonNull(plugin.getConfig().getString("settings.deathMessage"))
                 .replace("$world", Objects.requireNonNull(location.getWorld()).getName())
                 .replace("$x", String.valueOf(location.getBlockX()))
@@ -606,8 +612,10 @@ public class GraveManager {
 
     public Location getPlaceLocation(Location location) {
         location = roundLocation(location);
+        int worldHeight = location.getWorld().getMaxHeight();
+        int worldBottom = location.getWorld().getMinHeight();
 
-        if (location.getY() < 0 || location.getY() > 256) {
+        if (location.getY() < worldBottom || location.getY() > worldHeight) {
             if (plugin.getConfig().getBoolean("settings.placeVoid")) {
                 Location topLocation = getTop(location);
 
@@ -715,8 +723,7 @@ public class GraveManager {
     }
 
     public Location getHighestBlock(Location location) {
-        location = location.clone();
-        location.setY(256);
+        location.setY(Objects.requireNonNull(location.getWorld()).getMaxHeight());
 
         return getGround(location);
     }
@@ -725,7 +732,7 @@ public class GraveManager {
         Block block = location.getBlock();
 
         int max = 0;
-        while (max <= 256) {
+        while (max < Objects.requireNonNull(location.getWorld()).getMaxHeight()) {
             if (!dataManager.graveReplace().contains(block.getType()) && !isAir(block.getType())) {
                 return block.getLocation().add(0, 1, 0);
             }
@@ -738,12 +745,13 @@ public class GraveManager {
     }
 
     public Location getTop(Location location) {
-        location.setY(256);
+        int worldHeight = location.getWorld().getMaxHeight();
+        location.setY(worldHeight);
 
         Block block = location.getBlock();
 
         int max = 0;
-        while (max <= 256) {
+        while (max <= worldHeight) {
             if (dataManager.graveReplace().contains(block.getType()) || !isAir(block.getType())) {
                 return block.getLocation().add(0, 1, 0);
             }
@@ -757,10 +765,11 @@ public class GraveManager {
 
 
     public Location getLavaTop(Location location) {
+        int worldHeight = location.getWorld().getMaxHeight();
         Block block = location.getBlock();
 
         int max = 0;
-        while (max <= 256) {
+        while (max <= worldHeight) {
             if ((dataManager.graveReplace().contains(block.getType()) ||
                     isAir(block.getType())) && block.getType() != Material.LAVA) {
                 return block.getLocation();
@@ -774,13 +783,15 @@ public class GraveManager {
     }
 
     public Location getVoid(Location location) {
-        location.setY(0);
+        int worldHeight = location.getWorld().getMaxHeight();
+        int worldBottom = location.getWorld().getMinHeight();
+        location.setY(worldBottom);
 
         Block block = location.getBlock();
 
         int max = 0;
 
-        while (max <= 256) {
+        while (max <= worldHeight) {
             if (dataManager.graveReplace().contains(block.getType())) {
                 return block.getLocation().add(0, 1, 0);
             }
@@ -824,6 +835,7 @@ public class GraveManager {
             graveInventory.getInventory().clear();
         }
     }
+
 
     public void closeGrave(GraveInventory graveInventory) {
         List<HumanEntity> inventoryViewers = graveInventory.getInventory().getViewers();
@@ -1098,9 +1110,11 @@ public class GraveManager {
                 .replace("&", "§");
 
         if (graveInventory.getAliveTime() > 0) {
-            Long aliveTime = (graveInventory.getAliveTime() - (System.currentTimeMillis() - graveInventory.getCreatedTime())) / 1000;
+            Long aliveTime = (graveInventory.getProtectTime() - (System.currentTimeMillis() - graveInventory.getCreatedTime())) / 1000;
             String timeString = getTimeString(aliveTime);
+            assert timeString != null;
             line = line.replace("$time", timeString);
+
         } else {
             String timeInfinite = Objects.requireNonNull(plugin.getConfig().getString("settings.timeInfinite"))
                     .replace("&", "§");

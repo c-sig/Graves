@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -202,6 +203,7 @@ public class GUIManager {
                     String line = ChatColor.GRAY + lore.replace("$location", "LOC")
                             .replace("$item", String.valueOf(graveInventory.getItemAmount()))
                             .replace("$protect", graveManager.parseProtect(graveInventory))
+                            .replace("$time", String.valueOf(graveManager.getProtectTime((Player) player)))
                             .replace("&", "§");
 
                     if (graveInventory.getExperience() > 0) {
@@ -217,6 +219,7 @@ public class GUIManager {
                             .replace("$x", String.valueOf(graveInventory.getLocation().getBlockX()))
                             .replace("$y", String.valueOf(graveInventory.getLocation().getBlockY()))
                             .replace("$z", String.valueOf(graveInventory.getLocation().getBlockZ()));
+
 
                     loreList.add(line);
                 }
