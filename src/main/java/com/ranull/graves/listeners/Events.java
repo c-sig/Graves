@@ -6,6 +6,10 @@ import com.ranull.graves.inventory.GraveListInventory;
 import com.ranull.graves.manager.GUIManager;
 import com.ranull.graves.manager.GraveManager;
 import com.ranull.graves.manager.MessageManager;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -32,16 +36,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Events implements Listener {
     private Graves plugin;
     private GraveManager graveManager;
     private GUIManager guiManager;
     private MessageManager messageManager;
+    private RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
 
     public Events(Graves plugin, GraveManager graveManager, GUIManager guiManager, MessageManager messageManager) {
         this.plugin = plugin;
@@ -63,10 +66,11 @@ public class Events implements Listener {
             return;
         }
 
-        if (!plugin.getConfig().getBoolean("settings.ignoreKeepInventory") &&
-                Objects.requireNonNull(player.getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY))) {
-            return;
-        }
+        var regionAllowsGrave = regionContainer.createQuery().queryValue(
+                BukkitAdapter.adapt(player.getLocation()),
+                WorldGuardPlugin.inst().wrapPlayer(player),
+                plugin.getGraveSpawns());
+        if (regionAllowsGrave != null && !regionAllowsGrave) return;
 
         if (player.getLastDamageCause() != null && player.getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
             if (player.getKiller() != null) {
@@ -82,6 +86,19 @@ public class Events implements Listener {
             if (!plugin.getConfig().getBoolean("settings.createEnvironmental")) {
                 return;
             }
+        }
+
+        if (plugin.getConfig().getBoolean("settings.ignoreKeepInventory")) {
+            if (event.getKeepInventory()) {
+                event.setKeepInventory(false);
+                event.getDrops().addAll(
+                        Arrays.stream(player.getInventory().getContents())
+                                .filter(Objects::nonNull)
+                                .collect(Collectors.toList())
+                );
+            }
+        } else if (Objects.requireNonNull(player.getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY))) {
+            return;
         }
 
         int maxGraves = graveManager.getMaxGraves(player);
