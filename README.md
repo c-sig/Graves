@@ -5,30 +5,29 @@
 	<br>
 </div>
 
-<p align="center">The <b>ULTIMATE</b> full featured light weight death chest plugin / player grave plugin! Every feature you could ever need and more! While still being lightweight and small.</p>
+<p align="center">The <b>ULTIMATE</b> full-featured lightweight player grave plugin! Contains all the features you could ever want and more in a lightweight and small package!</p>
 
 <b>Features:</b>
 
 <ul>
-	<li>Extremely customizable</li>
+	<li>Extremely customizable, change virtually everything</li>
 	<li>Free and Open-source</li>
-	<li>Change virtually everything</li>
 	<li>Holograms</li>
-	<li>Protection (Protect a Set Amount of Time)</li>
-	<li>Locking/Unlocking (Toggle Protection)</li>
-	<li>Autolooting (Auto Equip Everything)</li>
-	<li>Experience (Store Percentage of Players EXP)</li>
-	<li>Zombies (Zombies Spawn From Graves)</li>
+	<li>Protection timer</li>
+	<li>Locking/Unlocking grave toggle functionality</li>
+	<li>Autolooting (auto-equip everything)</li>
+	<li>Experience (store a percentage of player experience points)</li>
+	<li>Zombies (zombies spawn from graves)</li>
 	<li>Particles</li>
-	<li>GUI (View Your Graves)</li>
-	<li>Teleporting + Cost (Vault Money Support)</li>
-	<li>Grave Tokens (Require a Token to Create Graves)</li>
-	<li>Item Blacklisting (Material, Name, Lore)</li>
-	<li>World Support (Enable/Disable Worlds)</li>
-	<li>Admin Viewing (View Others Graves)</li>
+	<li>GUI (view your graves)</li>
+	<li>Teleporting + Money (<a href="https://github.com/milkbowl/Vault">Vault</a> support)</li>
+	<li>Grave Tokens (require a token to create graves)</li>
+	<li>Item Blacklisting (material, name, lore)</li>
+	<li>World Support (enable/disable worlds)</li>
+	<li>Admin Viewing (view other graves)</li>
 	<li>Sound Effects</li>
 	<li>Particle Effects</li>
-	<li>Run Commands (On Open, Loot, Break, Explode Events)</li>
+	<li>Run Commands (on open, loot, break and, explosion events)</li>
 </ul>
 
 <div align="center">
@@ -45,7 +44,7 @@
 	<li><b>GitLab:</b> https://gitlab.com/8494742733/graves/</li>
 </ul>
 
-<b>Dontaion:</b>
+<b>Donation:</b>
 <ul>
 	<li><b>Bitcoin:</b> bc1qfkz5d8exrpk6m7qzdrd2zuw5hnnutw6ez9ztjp</li>
 	<li><b>Monero:</b> 44aFzuGmDVxi2tSXvzgzjejaCDg5F79Zr7JnLfUgZcP2K91ZrTDHZFYFUWeZqsMwr7Vw2h76jsQjgMKPKdvxXvSFLo35Q76</li>
